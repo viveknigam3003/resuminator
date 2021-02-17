@@ -1,10 +1,8 @@
 import { Box, Button, makeStyles, Typography } from "@material-ui/core";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { FaFilePdf } from "react-icons/fa";
-import { storage } from "../../Services/Storage";
-import { AuthContext } from "../Auth/AuthContext";
-import ProgressBar from "../Upload/ProgressBar";
 import { useToasts } from "react-toast-notifications";
+import ProgressBar from "../Upload/ProgressBar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,13 +37,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SelectedFile = ({ file }) => {
+const SelectedFile = ({ file, uploadRef, fileName }) => {
   const classes = useStyles();
   const { addToast } = useToasts();
-  const auth = useContext(AuthContext);
   const [progress, setProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
-  const uploadRef = storage.ref(`review/${auth.uid}`);
 
   const handleUpload = () => {
     uploadRef
