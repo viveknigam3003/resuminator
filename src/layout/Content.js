@@ -10,6 +10,8 @@
 
 import { Box } from "@material-ui/core";
 import React, { useRef, useState } from "react";
+import { FcInspection } from "react-icons/fc";
+import ActionButton from "../components/common/ActionButton";
 import PrintButton from "../components/common/PrintButton";
 import DownloadConfirmDialog from "../components/Feedback/DownloadConfirmDialog";
 import Resume from "../components/ResumePaper/Resume";
@@ -40,8 +42,20 @@ function Content() {
               setOpen={setOpenConfirmDialog}
             />
           </Box>
-          <Box justifyItems="center" m={5} p={2} pt={0}>
+          <Box
+            display="flex"
+            maxWidth="30rem"
+            justifyItems="center"
+            m={5}
+            p={2}
+            pt={0}
+          >
             <PrintButton openDialog={setOpenConfirmDialog} element={resume} />
+            <ActionButton
+              startIcon={<FcInspection />}
+              buttonText="Submit for review"
+              link="/review"
+            />
           </Box>
         </Box>
       ) : (
