@@ -4,6 +4,7 @@ import { FaFilePdf } from "react-icons/fa";
 import { storage } from "../../Services/Storage";
 import { AuthContext } from "../Auth/AuthContext";
 import ProgressBar from "../Upload/ProgressBar";
+import { useToasts } from "react-toast-notifications";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,31 +41,47 @@ const useStyles = makeStyles((theme) => ({
 
 const SelectedFile = ({ file }) => {
   const classes = useStyles();
+  const { addToast } = useToasts();
   const auth = useContext(AuthContext);
   const [progress, setProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
+  const uploadRef = storage.ref(`review/${auth.uid}`);
 
   const handleUpload = () => {
-    setShowProgress(true);
-    const uploadTask = storage.ref(`review/${auth.uid}`).put(file);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        setProgress(
-          Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+    uploadRef
+      .getMetadata()
+      .then(() =>
+        addToast(
+          "Resume already submitted for review. You shall hear back from us on your email.",
+          { appearance: "info" }
+        )
+      )
+      .catch(() => {
+        setShowProgress(true);
+        const uploadTask = uploadRef.put(file);
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            setProgress(
+              Math.round(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              )
+            );
+          },
+          (error) => {
+            addToast(error.message, {
+              appearance: "error",
+              autoDismiss: true,
+            });
+          },
+          () => {
+            addToast("File uploaded successfully!", {
+              appearance: "success",
+              autoDismiss: true,
+            });
+          }
         );
-      },
-      (error) => {
-        console.log(error);
-      },
-      () => {
-        storage
-          .ref("review")
-          .child(auth.uid)
-          .getDownloadURL()
-          .then((url) => console.log(url));
-      }
-    );
+      });
   };
 
   return (
