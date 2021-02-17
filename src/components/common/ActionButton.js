@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const ActionButton = ({ startIcon, endIcon, link, buttonText, onClick, className }) => {
+const ActionButton = ({ startIcon, endIcon, link, buttonText, onClick, className, sametarget }) => {
   const classes = useStyles()
   return (
     <Button
@@ -35,7 +35,7 @@ const ActionButton = ({ startIcon, endIcon, link, buttonText, onClick, className
       startIcon={startIcon}
       endIcon={endIcon}
       href={link}
-      target="_blank"
+      target={sametarget ? "" : "_blank"}
       onClick={onClick}
     >
       <Typography className={classes.text} variant="subtitle1" color="inherit">

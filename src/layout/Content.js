@@ -55,6 +55,7 @@ function Content() {
               startIcon={<FcInspection />}
               buttonText="Submit for review"
               link="/review"
+              sametarget
             />
           </Box>
         </Box>
