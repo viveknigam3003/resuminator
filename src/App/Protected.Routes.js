@@ -13,6 +13,7 @@ import { Route, Switch } from "react-router-dom";
 import Ticker from "../components/common/Ticker";
 import Footer from "../components/Footer/Footer";
 import Header from "../components/Header/Header";
+import Review from "../components/Review/Review";
 import UserAccount from "../components/User/UserAccount";
 import Content from "../layout/Content";
 import NotFound from "./404";
@@ -29,6 +30,7 @@ const ProtectedRoutes = ({ children }) => {
           <Content />
         </Route>
         <Route exact path="/account" component={UserAccount} />
+        <Route exact path="/review" component={Review} />
         <Route component={NotFound} />
       </Switch>
       <Footer />
