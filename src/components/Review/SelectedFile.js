@@ -1,5 +1,6 @@
-import { Box, Button, makeStyles, Typography } from "@material-ui/core";
+import { Box, Button, Link, makeStyles, Typography } from "@material-ui/core";
 import React, { useState } from "react";
+import { Fragment } from "react";
 import { FaFilePdf } from "react-icons/fa";
 import { useToasts } from "react-toast-notifications";
 import ProgressBar from "../Upload/ProgressBar";
@@ -26,6 +27,18 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "1.2rem",
     fontFamily: "Inter",
   },
+  messageTitle: {
+    fontWeight: 500,
+    fontSize: "2rem",
+    fontFamily: "Inter",
+    paddingBottom: "1rem",
+    color: theme.palette.secondary.dark
+  },
+  messageBody: {
+    fontSize: "1.2rem",
+    fontFamily: "Inter",
+    paddingBottom: "2rem",
+  },
   icon: {
     color: "red",
     marginRight: "0.5rem",
@@ -37,11 +50,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SelectedFile = ({ file, uploadRef, fileName }) => {
+const SelectedFile = ({ file, uploadRef }) => {
   const classes = useStyles();
   const { addToast } = useToasts();
   const [progress, setProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
+  const [uploadComplete, setUploadComplete] = useState(false);
 
   const handleUpload = () => {
     uploadRef
@@ -75,6 +89,7 @@ const SelectedFile = ({ file, uploadRef, fileName }) => {
               appearance: "success",
               autoDismiss: true,
             });
+            setUploadComplete(true);
           }
         );
       });
@@ -82,30 +97,51 @@ const SelectedFile = ({ file, uploadRef, fileName }) => {
 
   return (
     <Box className={`${classes.root} ${classes.center}`}>
-      <Box
-        display="flex"
-        width="inherit"
-        flexWrap="wrap"
-        className={classes.center}
-      >
-        <Typography className={classes.body1}>File Selected:</Typography>
-        <Typography className={classes.body2}>
-          <FaFilePdf className={classes.icon} color="red" />
-          {file.name}
-        </Typography>
-      </Box>
-      <Box mt={2} className={classes.center} width="inherit">
-        {showProgress ? <ProgressBar value={progress} /> : null}
-        <Button
-          disableElevation
-          color="primary"
-          variant="contained"
-          className={classes.button}
-          onClick={handleUpload}
+      {uploadComplete ? (
+        <Box
+          display="flex"
+          width="inherit"
+          flexWrap="wrap"
+          className={classes.center}
         >
-          Submit for review
-        </Button>
-      </Box>
+          <Typography className={classes.messageTitle}>
+            Congratulations! 🎉
+          </Typography>
+          <Typography className={classes.messageBody}>
+            Your resume is now on its way to awsomeness!
+            We'll get in touch with you over the email. If you have any doubts,
+            you can always write to us on{" "}
+            <Link href="mailto:hello@resuminator.in">hello@resuminator.in</Link>
+          </Typography>
+        </Box>
+      ) : (
+        <Fragment>
+          <Box
+            display="flex"
+            width="inherit"
+            flexWrap="wrap"
+            className={classes.center}
+          >
+            <Typography className={classes.body1}>File Selected:</Typography>
+            <Typography className={classes.body2}>
+              <FaFilePdf className={classes.icon} color="red" />
+              {file.name}
+            </Typography>
+          </Box>
+          <Box mt={2} className={classes.center} width="inherit">
+            {showProgress ? <ProgressBar value={progress} /> : null}
+            <Button
+              disableElevation
+              color="primary"
+              variant="contained"
+              className={classes.button}
+              onClick={handleUpload}
+            >
+              Submit for review
+            </Button>
+          </Box>
+        </Fragment>
+      )}
     </Box>
   );
 };

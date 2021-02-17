@@ -2,7 +2,6 @@ import { Box, makeStyles } from "@material-ui/core";
 import { blueGrey } from "@material-ui/core/colors";
 import React, { useCallback, useContext, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useToasts } from "react-toast-notifications";
 import { storage } from "../../Services/Storage";
 import { AuthContext } from "../Auth/AuthContext";
 import DragView from "../Upload/DragView";
@@ -42,7 +41,6 @@ const Review = () => {
   const classes = useStyles();
   const [file, setFile] = useState(null);
   const auth = useContext(AuthContext);
-  const { addToast } = useToasts();
   const uploadRef = storage.ref(`review/${auth.uid}`);
   const [submitted, setSubmitted] = useState(false);
   const [fileMeta, setFileMeta] = useState(null);
@@ -55,25 +53,24 @@ const Review = () => {
 
   React.useEffect(() => {
     let isSubscribed = true;
-    uploadRef
-      .getMetadata()
-      .then((meta) => {
-        if (isSubscribed) {
-          setFileMeta(meta);
-          setSubmitted(true);
-        }
-      })
-      .catch(() =>
-        isSubscribed
-          ? addToast(
-              "We're sorry, some error occured while fetching your review status. Please try again in sometime.",
-              { appearance: "error", autoDismiss: true }
-            )
-          : null
-      );
-
+    if (!fileMeta) {
+      uploadRef
+        .getMetadata()
+        .then((meta) => {
+          if (isSubscribed) {
+            setFileMeta(meta);
+            setSubmitted(true);
+          }
+        })
+        .catch(() => {
+          if (isSubscribed) {
+            setFileMeta({});
+            setSubmitted(false);
+          }
+        });
+    }
     return () => (isSubscribed = false);
-  }, [addToast, uploadRef]);
+  }, [fileMeta, uploadRef]);
 
   if (submitted) return <Submitted meta={fileMeta} />;
 
